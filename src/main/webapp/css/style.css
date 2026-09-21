@@ -1,0 +1,48 @@
+/* FashionStore Custom Styling */
+:root {
+    --primary-color: #2b5876;
+    --secondary-color: #4e4376;
+    --accent-color: #ff6b6b;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.main-content {
+    flex: 1;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.hero-banner {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: 70px 0;
+}
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.card-img-top {
+    height: 260px;
+    object-fit: cover;
+}
+
+.footer-custom {
+    background-color: #212529;
+    color: #adb5bd;
+}
