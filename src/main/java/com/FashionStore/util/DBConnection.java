@@ -6,14 +6,18 @@ import java.sql.SQLException;
 
 public class DBConnection {
 
-    // Aiven Cloud MySQL Connection Details
-    private static final String URL = "jdbc:mysql://mysql-131b3ca7-gurumoorthis877-6c0d.h.aivencloud.com:20898/defaultdb?sslmode=require";
-    private static final String USERNAME = "avnadmin";
-    private static final String PASSWORD = "AVNS_cJ5vCfJ1WB5VoH6NnwP";
+    private static final String URL = System.getenv("DB_URL") != null 
+        ? System.getenv("DB_URL") 
+        : "jdbc:mysql://mysql-131b3ca7-gurumoorthis877-6c0d.h.aivencloud.com:20898/defaultdb?sslmode=require";
+
+    private static final String USERNAME = System.getenv("DB_USER") != null 
+        ? System.getenv("DB_USER") 
+        : "avnadmin";
+
+    private static final String PASSWORD = System.getenv("DB_PASSWORD");
 
     static {
         try {
-            // Register MySQL Connector Driver (MySQL 8+)
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
