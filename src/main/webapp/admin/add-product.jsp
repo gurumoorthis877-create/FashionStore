@@ -55,7 +55,7 @@
                                     <% 
                                         @SuppressWarnings("unchecked")
                                         List<Category> categories = (List<Category>) request.getAttribute("categoryList");
-                                        if (categories != null) {
+                                        if (categories != null && !categories.isEmpty()) {
                                             for (Category c : categories) {
                                     %>
                                                 <option value="<%= c.getCategoryId() %>"><%= c.getCategoryName() %></option>
@@ -77,8 +77,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label fw-semibold">Image Path / URL</label>
-                                <input type="text" name="imageUrl" class="form-control" placeholder="images/shirt.jpg" required>
+                                <label class="form-label fw-semibold">Image Path / Web URL</label>
+                                <input type="text" name="imageUrl" class="form-control" placeholder="images/shirt.jpg or URL" required>
                             </div>
 
                             <hr class="my-4">
@@ -86,13 +86,17 @@
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label class="form-label fw-semibold">Size</label>
-                                    <select name="size" class="form-select" required>
-                                        <option value="S">Small (S)</option>
-                                        <option value="M" selected>Medium (M)</option>
-                                        <option value="L">Large (L)</option>
-                                        <option value="XL">Extra Large (XL)</option>
-                                    </select>
+                                    <label class="form-label fw-semibold">Size (Select or Type Custom)</label>
+                                    <input type="text" name="size" class="form-control" list="sizeOptions" placeholder="Type or select size..." required autocomplete="off">
+                                    <datalist id="sizeOptions">
+                                        <option value="ALL"></option>
+                                        <option value="Free Size"></option>
+                                        <option value="S"></option>
+                                        <option value="M"></option>
+                                        <option value="L"></option>
+                                        <option value="XL"></option>
+                                        <option value="XXL"></option>
+                                    </datalist>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-semibold">Color</label>

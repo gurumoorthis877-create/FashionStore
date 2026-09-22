@@ -14,15 +14,33 @@ import com.FashionStore.util.DBConnection;
 public class CategoryDAOImpl implements CategoryDAO {
 
     @Override
-    public boolean addCategory(Category category) {
-        String sql = "INSERT INTO categories (category_name, description) VALUES (?, ?)";
+    public List<Category> getAllCategories() {
+        List<Category> list = new ArrayList<>();
+        String sql = "SELECT category_id, name FROM categories";
+        
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
             
-            stmt.setString(1, category.getCategoryName());
-            stmt.setString(2, category.getDescription());
-            
-            return stmt.executeUpdate() > 0;
+            while (rs.next()) {
+                Category c = new Category();
+                c.setCategoryId(rs.getInt("category_id"));
+                c.setCategoryName(rs.getString("name"));
+                list.add(c);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    @Override
+    public boolean addCategory(Category category) {
+        String sql = "INSERT INTO categories (name) VALUES (?)";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, category.getCategoryName());
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -31,15 +49,12 @@ public class CategoryDAOImpl implements CategoryDAO {
 
     @Override
     public boolean updateCategory(Category category) {
-        String sql = "UPDATE categories SET category_name = ?, description = ? WHERE category_id = ?";
+        String sql = "UPDATE categories SET name = ? WHERE category_id = ?";
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setString(1, category.getCategoryName());
-            stmt.setString(2, category.getDescription());
-            stmt.setInt(3, category.getCategoryId());
-            
-            return stmt.executeUpdate() > 0;
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, category.getCategoryName());
+            ps.setInt(2, category.getCategoryId());
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -50,10 +65,9 @@ public class CategoryDAOImpl implements CategoryDAO {
     public boolean deleteCategory(int categoryId) {
         String sql = "DELETE FROM categories WHERE category_id = ?";
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setInt(1, categoryId);
-            return stmt.executeUpdate() > 0;
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, categoryId);
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -62,16 +76,16 @@ public class CategoryDAOImpl implements CategoryDAO {
 
     @Override
     public Category getCategoryById(int categoryId) {
-        String sql = "SELECT * FROM categories WHERE category_id = ?";
+        String sql = "SELECT category_id, name FROM categories WHERE category_id = ?";
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setInt(1, categoryId);
-            
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return extractCategoryFromResultSet(rs);
-                }
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, categoryId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Category c = new Category();
+                c.setCategoryId(rs.getInt("category_id"));
+                c.setCategoryName(rs.getString("name"));
+                return c;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -81,46 +95,20 @@ public class CategoryDAOImpl implements CategoryDAO {
 
     @Override
     public Category getCategoryByName(String categoryName) {
-        String sql = "SELECT * FROM categories WHERE category_name = ?";
+        String sql = "SELECT category_id, name FROM categories WHERE name = ?";
         try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setString(1, categoryName);
-            
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return extractCategoryFromResultSet(rs);
-                }
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, categoryName);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Category c = new Category();
+                c.setCategoryId(rs.getInt("category_id"));
+                c.setCategoryName(rs.getString("name"));
+                return c;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
-    }
-
-    @Override
-    public List<Category> getAllCategories() {
-        List<Category> categoryList = new ArrayList<>();
-        String sql = "SELECT * FROM categories ORDER BY category_name ASC";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            
-            while (rs.next()) {
-                categoryList.add(extractCategoryFromResultSet(rs));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return categoryList;
-    }
-
-    private Category extractCategoryFromResultSet(ResultSet rs) throws SQLException {
-        Category category = new Category();
-        category.setCategoryId(rs.getInt("category_id"));
-        category.setCategoryName(rs.getString("category_name"));
-        category.setDescription(rs.getString("description"));
-        category.setCreatedAt(rs.getTimestamp("created_at"));
-        return category;
     }
 }

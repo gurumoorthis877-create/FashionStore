@@ -183,9 +183,29 @@ public class UserDAOImpl implements UserDAO {
         user.setPhone(rs.getString("phone"));
         user.setPassword(rs.getString("password"));
         user.setGender(rs.getString("gender"));
-        user.setAddress(rs.getString("address"));
-        user.setRole(rs.getString("role"));
-        user.setCreatedAt(rs.getTimestamp("created_at"));
+
+        try {
+            user.setAddress(rs.getString("address"));
+        } catch (SQLException ignored) {
+            try {
+                user.setAddress(rs.getString("shipping_address"));
+            } catch (SQLException e) {
+                user.setAddress("");
+            }
+        }
+
+        try {
+            user.setRole(rs.getString("role"));
+        } catch (SQLException e) {
+            user.setRole("CUSTOMER");
+        }
+
+        try {
+            user.setCreatedAt(rs.getTimestamp("created_at"));
+        } catch (SQLException e) {
+            user.setCreatedAt(null);
+        }
+
         return user;
     }
 }
